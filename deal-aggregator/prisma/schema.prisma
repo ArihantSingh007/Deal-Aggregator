@@ -1,0 +1,165 @@
+// Prisma schema for DealLedger — a manually-curated deal aggregation platform.
+// Run `npm run db:push` (quick sync) or `npm run db:migrate` (versioned migration)
+// after editing this file.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Platform {
+  AMAZON
+  FLIPKART
+}
+
+enum Availability {
+  IN_STOCK
+  OUT_OF_STOCK
+  LIMITED_STOCK
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  passwordHash  String? // null when the user only signs in via an OAuth provider
+  image         String?
+  role          Role          @default(USER)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  wishlist      Wishlist[]
+  priceAlerts   PriceAlert[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  icon      String? // lucide-react icon name, e.g. "smartphone"
+  products  Product[]
+  createdAt DateTime  @default(now())
+
+  @@map("categories")
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  slug           String   @unique // SEO-friendly URL segment, e.g. "samsung-galaxy-s24-ultra"
+  name           String
+  brand          String
+  categoryId     String
+  category       Category @relation(fields: [categoryId], references: [id])
+  description    String   @db.Text
+  images         String[] // array of image URLs
+
+  amazonUrl      String?
+  flipkartUrl    String?
+  amazonAffiliateLink   String?
+  flipkartAffiliateLink String?
+
+  currentPrice   Decimal  @db.Decimal(10, 2)
+  originalPrice  Decimal  @db.Decimal(10, 2)
+
+  rating         Float    @default(0) // 0-5
+  reviewCount    Int      @default(0)
+
+  availability   Availability @default(IN_STOCK)
+
+  dealScore      Int      @default(0) // 0-100, recalculated by lib/deal-score.ts
+  dealLabel      String   @default("Normal Price")
+  isFeatured     Boolean  @default(false) // admin can pin to "Today's Best Deals"
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  priceHistory   PriceHistory[]
+  wishlistedBy   Wishlist[]
+  priceAlerts    PriceAlert[]
+  dealSuggestions DealSuggestion[]
+
+  @@index([categoryId])
+  @@index([dealScore])
+  @@index([createdAt])
+  @@map("products")
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price     Decimal  @db.Decimal(10, 2)
+  platform  Platform
+  timestamp DateTime @default(now())
+
+  @@index([productId, timestamp])
+  @@map("price_history")
+}
+
+model Wishlist {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, productId])
+  @@map("wishlist")
+}
+
+model PriceAlert {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  targetPrice Decimal  @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  triggeredAt DateTime?
+
+  @@index([userId])
+  @@index([productId])
+  @@map("price_alerts")
+}
+
+/// A candidate "best deal" produced by the automatic deal finder (lib/deal-finder.ts).
+/// The finder never publishes anything directly — it only proposes suggestions here,
+/// which an admin reviews and approves (or rejects) from /admin/deal-finder.
+model DealSuggestion {
+  id          String           @id @default(cuid())
+  productId   String
+  product     Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  status      SuggestionStatus @default(PENDING)
+
+  // Snapshot of the numbers that justified the suggestion at the time it was generated,
+  // so the admin can see *why* it was flagged even if prices move again before review.
+  score            Int
+  label            String
+  reason           String        @db.Text
+  priceAtSuggestion Decimal      @db.Decimal(10, 2)
+
+  createdAt   DateTime @default(now())
+  reviewedAt  DateTime?
+
+  @@index([status])
+  @@index([productId])
+  @@map("deal_suggestions")
+}
