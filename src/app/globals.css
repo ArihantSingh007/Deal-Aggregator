@@ -83,65 +83,65 @@
 
 @layer base {
   :root {
-    --background: 216 33% 95%;         /* #EEF1F6 cool paper */
-    --foreground: 210 33% 9%;          /* #0F1720 ink navy */
+    --background: 220 25% 97%;         /* Crisp modern light canvas #F8FAFC */
+    --foreground: 222 47% 11%;          /* Rich deep slate #0F172A */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 33% 9%;
+    --card-foreground: 222 47% 11%;
 
-    --primary: 211 43% 24%;            /* #1E3A5F ticker navy */
-    --primary-foreground: 0 0% 100%;
+    --primary: 222 47% 14%;            /* Sleek midnight navy */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 214 32% 91%;          /* #E2E8F0 */
-    --secondary-foreground: 210 33% 9%;
+    --secondary: 215 25% 93%;          /* Soft clean slate secondary */
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 40%;
+    --muted: 215 25% 93%;
+    --muted-foreground: 215 18% 46%;
 
-    --accent: 39 74% 38%;              /* #B8860B goldenrod — "featured" only */
+    --accent: 38 92% 50%;              /* Modern vibrant amber */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 6 62% 45%;          /* #C0392B */
+    --destructive: 0 84% 60%;          /* Vibrant coral red */
     --destructive-foreground: 0 0% 100%;
 
-    --signal: 156 79% 29%;             /* #0F8B5E deep emerald — savings only */
+    --signal: 160 84% 39%;             /* Vivid emerald green #10B981 */
     --signal-foreground: 0 0% 100%;
 
-    --border: 214 25% 85%;
-    --input: 214 25% 85%;
-    --ring: 211 43% 24%;
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 222 47% 14%;
 
-    --radius: 1.1rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 212 38% 8%;          /* #0C1420 deep ink */
-    --foreground: 210 25% 92%;
+    --background: 224 71% 4%;          /* Deep luxurious dark #030712 */
+    --foreground: 210 40% 98%;
 
-    --card: 212 32% 12%;
-    --card-foreground: 210 25% 92%;
+    --card: 224 45% 8%;                /* Slightly lifted dark surface #080D1A */
+    --card-foreground: 210 40% 98%;
 
-    --primary: 210 60% 72%;
-    --primary-foreground: 212 38% 8%;
+    --primary: 217 91% 60%;            /* Vibrant accent blue #3B82F6 */
+    --primary-foreground: 224 71% 4%;
 
-    --secondary: 212 24% 18%;
-    --secondary-foreground: 210 25% 92%;
+    --secondary: 224 35% 14%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 212 24% 18%;
-    --muted-foreground: 215 16% 65%;
+    --muted: 224 35% 14%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 39 70% 55%;
-    --accent-foreground: 212 38% 8%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 224 71% 4%;
 
-    --destructive: 6 70% 55%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --signal: 156 60% 45%;
-    --signal-foreground: 212 38% 8%;
+    --signal: 160 84% 39%;             /* Radiant emerald #10B981 */
+    --signal-foreground: 224 71% 4%;
 
-    --border: 212 24% 20%;
-    --input: 212 24% 20%;
-    --ring: 210 60% 72%;
+    --border: 224 30% 16%;
+    --input: 224 30% 16%;
+    --ring: 217 91% 60%;
   }
 
   * {
