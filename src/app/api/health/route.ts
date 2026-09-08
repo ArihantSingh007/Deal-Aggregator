@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 // DB outage or exhausted connection pool is the most common real failure mode
 // for this stack — a process that's "up" but can't reach Postgres is not
 // actually healthy.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     await prisma.$queryRaw`SELECT 1`;

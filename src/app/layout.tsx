@@ -11,7 +11,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swa
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading", display: "swap" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-data", display: "swap" });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = rawSiteUrl.startsWith("http://") || rawSiteUrl.startsWith("https://") ? rawSiteUrl : `https://${rawSiteUrl}`;
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "DealLedger";
 
 export const metadata: Metadata = {

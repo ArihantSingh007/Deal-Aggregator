@@ -42,12 +42,6 @@ if (isConfigured) {
     limiter: Ratelimit.slidingWindow(5, "1 h"),
     prefix: "ratelimit:register",
   });
-} else if (process.env.NODE_ENV === "production") {
-  // Only warn in production — noisy locally where nobody sets this up.
-  console.warn(
-    "[rate-limit] UPSTASH_REDIS_REST_URL/TOKEN are not set — login and registration " +
-      "endpoints are NOT rate-limited. See DEPLOYMENT.md to enable this before going live."
-  );
 }
 
 export interface RateLimitResult {

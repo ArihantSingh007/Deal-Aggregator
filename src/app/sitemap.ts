@@ -1,13 +1,21 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = rawSiteUrl.startsWith("http://") || rawSiteUrl.startsWith("https://") ? rawSiteUrl : `https://${rawSiteUrl}`;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, categories] = await Promise.all([
-    prisma.product.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.category.findMany({ select: { slug: true } }),
-  ]);
+  let products: Array<{ slug: string; updatedAt: Date }> = [];
+  let categories: Array<{ slug: string }> = [];
+
+  try {
+    [products, categories] = await Promise.all([
+      prisma.product.findMany({ select: { slug: true, updatedAt: true } }),
+      prisma.category.findMany({ select: { slug: true } }),
+    ]);
+  } catch (err) {
+    console.error("Sitemap: unable to query database, generating static routes only:", err);
+  }
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1 },

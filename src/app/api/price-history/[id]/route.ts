@@ -16,6 +16,9 @@ export const PATCH = withErrorHandling(async (request: Request, { params }: Rout
   const parsed = priceHistoryUpdateSchema.safeParse(await request.json());
   if (!parsed.success) return apiValidationError(parsed.error);
 
+  const existing = await prisma.priceHistory.findUnique({ where: { id } });
+  if (!existing) return apiError("Not found", 404);
+
   const entry = await prisma.priceHistory.update({ where: { id }, data: parsed.data });
   await recalculateAndSaveDealScore(entry.productId);
   return apiSuccess(entry);

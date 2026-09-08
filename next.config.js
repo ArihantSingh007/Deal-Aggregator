@@ -16,8 +16,15 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" }, // used by seed data only
       { protocol: "https", hostname: "m.media-amazon.com" }, // Amazon product images
       { protocol: "https", hostname: "images-na.ssl-images-amazon.com" },
+      { protocol: "https", hostname: "images-eu.ssl-images-amazon.com" },
+      { protocol: "https", hostname: "images-fe.ssl-images-amazon.com" },
+      { protocol: "https", hostname: "ecx.images-amazon.com" },
       { protocol: "https", hostname: "rukminim1.flixcart.com" }, // Flipkart product images
       { protocol: "https", hostname: "rukminim2.flixcart.com" },
+      { protocol: "https", hostname: "rukmin1.flixcart.com" },
+      { protocol: "https", hostname: "rukmin2.flixcart.com" },
+      { protocol: "https", hostname: "img1a.flixcart.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" }, // Google OAuth user avatars
     ],
   },
 
@@ -40,10 +47,10 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' https: data:",
       "font-src 'self' data:",
-      "connect-src 'self'",
+      "connect-src 'self' https://*.vercel-insights.com https://*.vercel-scripts.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://accounts.google.com",
       "object-src 'none'",
     ].join("; ");
 

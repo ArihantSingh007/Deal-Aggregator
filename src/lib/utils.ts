@@ -6,7 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(value: number | string, currency: string = "INR"): string {
-  const amount = typeof value === "string" ? parseFloat(value) : value;
+  const parsed = typeof value === "string" ? parseFloat(value) : value;
+  const amount = typeof parsed === "number" && !isNaN(parsed) ? parsed : 0;
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency,
@@ -15,7 +16,7 @@ export function formatCurrency(value: number | string, currency: string = "INR")
 }
 
 export function calculateDiscountPercent(currentPrice: number, originalPrice: number): number {
-  if (!originalPrice || originalPrice <= 0) return 0;
+  if (!originalPrice || originalPrice <= 0 || currentPrice >= originalPrice) return 0;
   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
 }
 
@@ -29,5 +30,7 @@ export function slugify(text: string): string {
 }
 
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(date));
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(d);
 }

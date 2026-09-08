@@ -13,11 +13,18 @@ function toPascalCase(s: string) {
   return s.replace(/(^\w|-\w)/g, (c) => c.replace("-", "").toUpperCase());
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoriesPage() {
-  const categories = await prisma.category.findMany({
-    orderBy: { name: "asc" },
-    include: { _count: { select: { products: true } } },
-  });
+  let categories: Array<{ id: string; name: string; slug: string; icon: string | null; _count: { products: number } }> = [];
+  try {
+    categories = await prisma.category.findMany({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { products: true } } },
+    });
+  } catch (err) {
+    console.error("Failed to load categories:", err);
+  }
 
   return (
     <div className="container py-14 md:py-16">

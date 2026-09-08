@@ -54,8 +54,8 @@ interface CheckTarget {
  * Chain this with /api/admin/deal-finder on a cron schedule for a hands-off
  * pipeline — see README "Automatic deal finder" section.
  */
-export const POST = withErrorHandling(async () => {
-  const guard = await requireAdmin();
+export const POST = withErrorHandling(async (request: Request) => {
+  const guard = await requireAdmin(request);
   if (guard.error) return guard.error;
 
   const totalTrackedCount = await prisma.product.count({

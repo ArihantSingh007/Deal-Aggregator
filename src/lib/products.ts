@@ -45,41 +45,61 @@ export function serializePriceHistory(history: PriceHistory[]): PriceHistoryPoin
 const withCategory = { category: true } as const;
 
 export async function getFeaturedDeals(limit = 8) {
-  const products = await prisma.product.findMany({
-    where: { isFeatured: true },
-    orderBy: { dealScore: "desc" },
-    take: limit,
-    include: withCategory,
-  });
-  return products.map(serializeProduct);
+  try {
+    const products = await prisma.product.findMany({
+      where: { isFeatured: true },
+      orderBy: { dealScore: "desc" },
+      take: limit,
+      include: withCategory,
+    });
+    return products.map(serializeProduct);
+  } catch (err) {
+    console.error("Failed to load featured deals:", err);
+    return [];
+  }
 }
 
 export async function getTrendingProducts(limit = 8) {
-  const products = await prisma.product.findMany({
-    orderBy: { reviewCount: "desc" },
-    take: limit,
-    include: withCategory,
-  });
-  return products.map(serializeProduct);
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { reviewCount: "desc" },
+      take: limit,
+      include: withCategory,
+    });
+    return products.map(serializeProduct);
+  } catch (err) {
+    console.error("Failed to load trending products:", err);
+    return [];
+  }
 }
 
 export async function getLowestPriceProducts(limit = 8) {
-  const products = await prisma.product.findMany({
-    orderBy: { dealScore: "desc" },
-    where: { availability: { not: "OUT_OF_STOCK" } },
-    take: limit,
-    include: withCategory,
-  });
-  return products.map(serializeProduct);
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { dealScore: "desc" },
+      where: { availability: { not: "OUT_OF_STOCK" } },
+      take: limit,
+      include: withCategory,
+    });
+    return products.map(serializeProduct);
+  } catch (err) {
+    console.error("Failed to load lowest price products:", err);
+    return [];
+  }
 }
 
 export async function getRecentlyAddedProducts(limit = 8) {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    include: withCategory,
-  });
-  return products.map(serializeProduct);
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: withCategory,
+    });
+    return products.map(serializeProduct);
+  } catch (err) {
+    console.error("Failed to load recently added products:", err);
+    return [];
+  }
 }
 
 export interface DealsFilter {
@@ -150,7 +170,12 @@ export async function getProductBySlug(slug: string) {
 }
 
 export async function getAllCategories() {
-  return prisma.category.findMany({ orderBy: { name: "asc" } });
+  try {
+    return await prisma.category.findMany({ orderBy: { name: "asc" } });
+  } catch (err) {
+    console.error("Failed to load categories:", err);
+    return [];
+  }
 }
 
 /** Recalculates and persists a product's deal score based on its current data + price history. */
