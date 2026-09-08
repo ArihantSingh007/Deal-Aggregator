@@ -1,7 +1,38 @@
+const getNextAuthUrl = () => {
+  const url = process.env.NEXTAUTH_URL;
+  if (url && typeof url === "string" && url.trim() !== "") {
+    return url.startsWith("http") ? url : `https://${url}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+};
+
+const getSiteUrl = () => {
+  const url = process.env.NEXT_PUBLIC_SITE_URL;
+  if (url && typeof url === "string" && url.trim() !== "") {
+    return url.startsWith("http") ? url : `https://${url}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+};
+
+// Guarantee valid URLs so NextAuth parseUrl never receives an empty string
+process.env.NEXTAUTH_URL = getNextAuthUrl();
+process.env.NEXT_PUBLIC_SITE_URL = getSiteUrl();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Don't advertise the framework in responses — trivial but standard hardening.
   poweredByHeader: false,
+
+  env: {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  },
 
   images: {
     // A wildcard "**" hostname lets anyone pass an arbitrary external image URL
